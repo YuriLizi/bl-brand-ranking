@@ -1,0 +1,41 @@
+# --- core data / modelling (pinned to the researcher's stack) ---
+pandas==2.2.3
+numpy==1.26.4
+scikit-learn==1.5.2
+catboost==1.2.7
+joblib==1.4.2
+names-dataset==3.1.0
+
+# --- TabPFN: local, in-process (open-source weights) ---
+# tabpfn-client resolves the vendored originals' module-scope import AND backs
+# USE_HOSTED_TABPFN=true. 0.1.9 is NOT usable: its endpoint is retired and every call
+# returns 503 "Service is disabled". See README "TabPFN" section.
+tabpfn==2.0.9
+tabpfn-client==0.6.0
+
+# --- MLflow tracking + model registry ---
+mlflow==2.19.0
+
+# --- storage: local Delta table, no Spark/JVM ---
+deltalake==0.24.0
+pyarrow==18.1.0
+
+# --- serving ---
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+# Floor set by tabpfn-client 0.6.0, which requires pydantic>=2.11.7 and
+# pydantic-settings>=2.14.2. The older pins here (2.10.4 / 2.7.0) made the image
+# unbuildable once the client was raised to a version whose endpoint still exists.
+# Verified against FastAPI 0.115.6 and MLflow 2.19.0: `pip check` clean, 21 tests pass.
+pydantic==2.13.4
+pydantic-settings==2.15.0
+orjson==3.10.13
+
+# --- scheduling ---
+apscheduler==3.11.0
+
+# --- load simulation ---
+httpx==0.28.1
+
+# --- misc ---
+python-dotenv==1.0.1

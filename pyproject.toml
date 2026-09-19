@@ -1,0 +1,87 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bl_ranker"
+version = "1.0.0"
+description = "Production ML system for Business Loans brand ranking"
+# The researcher's scripts use PEP 701 f-strings (newlines inside the expression),
+# which are a SyntaxError before 3.12. This pin is inherited, not chosen.
+requires-python = ">=3.12"
+
+# Abstract dependencies, deliberately loose. requirements.txt holds the exact pins for a
+# reproducible local/Docker environment; this list is what `pip install bl_ranker` needs
+# to work anywhere -- including a Databricks serverless environment that already ships its
+# own pandas/numpy/mlflow and would conflict with hard pins.
+#
+# Declaring these here is what stops each deployment target having to restate them: the
+# first Databricks run failed on `deltalake`, the second on `pydantic_settings`, purely
+# because the wheel declared no dependencies at all.
+dependencies = [
+    "pandas>=2.0",
+    "numpy>=1.24",
+    "scikit-learn>=1.3",
+    "catboost>=1.2",
+    "joblib>=1.3",
+    "names-dataset>=3.1",
+    # PINNED EXACTLY, and this one is not negotiable. TabPFN is not a utility library --
+    # it IS the payout model, so its version determines predictions. Everything measured
+    # in the README (the fidelity study, the n_estimators decision) was measured on 2.0.9.
+    #
+    # There is a second reason. Releases after 2.0.9 gate the weight download behind a
+    # one-time licence acceptance and require TABPFN_TOKEN even for *local* inference:
+    #   TabPFNLicenseError: TabPFN requires a one-time license acceptance to download
+    #   model weights for local inference, but no interactive terminal is available.
+    # A loose `>=2.0` bound let a newer release install on Databricks and the training job
+    # died on exactly that. 2.0.9 downloads its weights from HuggingFace with no
+    # credential, which is what keeps this repo runnable by anyone with no signup.
+    "tabpfn==2.0.9",
+    # Needed for TWO reasons, and the second one is why the lower bound is not loose.
+    #  1. The VENDORED ORIGINAL scripts import it at module scope
+    #     (`from tabpfn_client import TabPFNRegressor, set_access_token`), so the import
+    #     has to resolve even though the default serving path never calls it.
+    #  2. `USE_HOSTED_TABPFN=true` genuinely uses it, and the hosted API is the
+    #     researcher's original design -- so that switch has to actually work.
+    #
+    # >=0.6 is a CORRECTNESS bound, not a preference. The previously pinned 0.1.9 targets
+    # an endpoint Prior Labs has retired: every call returns
+    #     503 Service Unavailable -- "Service is disabled"
+    # so the advertised escape hatch was dead on arrival. Measured on 0.6.0 the hosted
+    # path works (fit 7.9s, predict p50 1023ms). 0.6.0 still exports the same two symbols
+    # the vendored originals import, so this is safe for them.
+    "tabpfn-client>=0.6",
+    "mlflow>=2.15",
+    "pydantic>=2.6",
+    "pydantic-settings>=2.2",
+    # Used only to render the chart artifacts logged to MLflow. Present locally as a
+    # CatBoost transitive dep, but relying on that is how you get a training run that
+    # dies after the expensive part. Declared, and the import is guarded anyway.
+    "matplotlib>=3.7",
+]
+
+[project.optional-dependencies]
+# Local Delta backend. NOT installed on Databricks, where Unity Catalog tables are reached
+# through Spark and delta-rs is both unnecessary and absent.
+local = ["deltalake>=0.18", "pyarrow>=15"]
+serving = ["fastapi>=0.110", "uvicorn[standard]>=0.29", "orjson>=3.9"]
+scheduler = ["apscheduler>=3.10"]
+loadtest = ["httpx>=0.27"]
+
+[project.scripts]
+# Referenced by databricks/databricks.yml as python_wheel_task entry points.
+ingest = "bl_ranker.data.ingest:main"
+train = "bl_ranker.training.run:main"
+serve = "bl_ranker.serving.cli:main"
+rollback = "bl_ranker.rollback:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+bl_ranker = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+filterwarnings = ["ignore::DeprecationWarning", "ignore::UserWarning"]

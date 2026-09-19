@@ -1,0 +1,164 @@
+# Databricks Asset Bundle.
+#
+#   databricks bundle validate -t dev
+#   databricks bundle deploy   -t dev
+#   databricks bundle run bl_weekly_production_training -t dev
+#
+# The same package runs here and locally; only the tracking URI and the data location
+# change. That is deliberate -- a platform difference should never be a code difference.
+#
+# COMPUTE: serverless, deliberately.
+# Databricks Free Edition provides serverless compute only ("custom compute
+# configurations are not supported"), so there are no `job_clusters` and no
+# `node_type_id` anywhere in this file. Serverless also has no cluster spin-up wait,
+# which suits a job that runs once a week. Dependencies are declared per environment
+# rather than as cluster libraries.
+
+bundle:
+  name: bl-brand-ranking
+
+variables:
+  catalog:
+    # `workspace` is the writable managed catalog that Databricks Free Edition provides.
+    # Paid workspaces usually have `main` instead -- override with
+    #   databricks bundle deploy --var catalog=main
+    description: Unity Catalog catalog holding the sessions table and the model.
+    default: workspace
+  schema:
+    description: Schema inside the catalog.
+    default: bl
+  notification_email:
+    description: Address for job failure alerts. Leave empty to disable.
+    default: ""
+
+targets:
+  dev:
+    mode: development
+    default: true
+
+  prod:
+    mode: production
+    run_as:
+      user_name: ${workspace.current_user.userName}
+
+resources:
+  jobs:
+    # ---------------------------------------------------------------- production
+    bl_weekly_production_training:
+      name: "[BL] Weekly production training"
+
+      schedule:
+        # Sunday 05:00, as required by the briefing. Identical in meaning to the
+        # local scheduler's "0 5 * * 0" so the two environments cannot drift.
+        # Quartz format: sec min hour day-of-month month day-of-week
+        quartz_cron_expression: "0 0 5 ? * SUN"
+        timezone_id: "UTC"
+        # PAUSED so a free-tier workspace does not run this unattended every week.
+        # The schedule is still declared and visible in the Workflows UI; flip to
+        # UNPAUSED (or use the UI toggle) to activate it.
+        pause_status: PAUSED
+
+      # A weekly batch job must never run twice concurrently, and must not hang forever.
+      max_concurrent_runs: 1
+      timeout_seconds: 14400
+
+      tasks:
+        - task_key: ingest
+          environment_key: bl_env
+          python_wheel_task:
+            package_name: bl_ranker
+            entry_point: ingest
+            parameters:
+              - "--table"
+              - "${var.catalog}.${var.schema}.bl_sessions"
+              # Uploaded once to the Unity Catalog volume; see docs/RUNBOOK.md B4.
+              - "--csv"
+              - "/Volumes/${var.catalog}/${var.schema}/raw/bl_full_data.csv"
+
+        - task_key: train_production
+          depends_on:
+            - task_key: ingest
+          environment_key: bl_env
+          python_wheel_task:
+            package_name: bl_ranker
+            entry_point: train
+            parameters:
+              - "--mode"
+              - "production"
+              - "--table"
+              - "${var.catalog}.${var.schema}.bl_sessions"
+              - "--tracking-uri"
+              - "databricks"
+              - "--registry-uri"
+              - "databricks-uc"
+              - "--registered-model"
+              - "${var.catalog}.${var.schema}.bl_brand_ranker"
+              # Databricks requires an absolute workspace path for experiment names;
+              # a bare name (which works locally) is rejected with INVALID_PARAMETER_VALUE.
+              - "--experiment"
+              - "/Users/${workspace.current_user.userName}/bl_brand_ranking"
+
+      environments:
+        - environment_key: bl_env
+          spec:
+            # MUST be >= 3. Serverless environment versions 1 and 2 ship Python
+            # 3.10/3.11, and this package declares requires-python >= 3.12 because the
+            # researcher's bl_models_train.py uses PEP 701 f-strings. Deploying on v2
+            # fails at library-install time with "python_requires constraint does not
+            # match the Python version running on the compute". v4 provides 3.12.3.
+            environment_version: "4"
+            dependencies:
+              # Just the wheel. Its own `dependencies` in pyproject.toml pull everything
+              # else (tabpfn, catboost, names-dataset, pydantic-settings, ...), so this
+              # list does not have to be kept in sync by hand. The `local` extra is
+              # deliberately NOT installed -- delta-rs is unused here, because Unity
+              # Catalog tables are read through Spark.
+              - ../dist/bl_ranker-1.0.0-py3-none-any.whl
+
+    # ---------------------------------------------------------------- evaluation
+    # Kept on its own schedule so accuracy reports are produced even in weeks when we
+    # choose not to promote a new model. Runs earlier so its results are available
+    # before the production run replaces the champion.
+    bl_weekly_evaluation:
+      name: "[BL] Weekly train/test evaluation"
+
+      schedule:
+        quartz_cron_expression: "0 0 3 ? * SUN"
+        timezone_id: "UTC"
+        # PAUSED so a free-tier workspace does not run this unattended every week.
+        # The schedule is still declared and visible in the Workflows UI; flip to
+        # UNPAUSED (or use the UI toggle) to activate it.
+        pause_status: PAUSED
+
+      max_concurrent_runs: 1
+      timeout_seconds: 14400
+
+      tasks:
+        - task_key: train_test
+          environment_key: bl_env
+          python_wheel_task:
+            package_name: bl_ranker
+            entry_point: train
+            parameters:
+              - "--mode"
+              - "train_test"
+              - "--table"
+              - "${var.catalog}.${var.schema}.bl_sessions"
+              - "--tracking-uri"
+              - "databricks"
+              # Databricks requires an absolute workspace path for experiment names;
+              # a bare name (which works locally) is rejected with INVALID_PARAMETER_VALUE.
+              - "--experiment"
+              - "/Users/${workspace.current_user.userName}/bl_brand_ranking"
+
+      environments:
+        - environment_key: bl_env
+          spec:
+            # MUST be >= 3. Serverless environment versions 1 and 2 ship Python
+            # 3.10/3.11, and this package declares requires-python >= 3.12 because the
+            # researcher's bl_models_train.py uses PEP 701 f-strings. Deploying on v2
+            # fails at library-install time with "python_requires constraint does not
+            # match the Python version running on the compute". v4 provides 3.12.3.
+            environment_version: "4"
+            dependencies:
+              - ../dist/bl_ranker-1.0.0-py3-none-any.whl

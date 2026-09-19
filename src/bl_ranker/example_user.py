@@ -1,0 +1,47 @@
+"""The canonical example request, as one importable constant.
+
+There is exactly one copy of this payload and it lives inside the package, because it is
+used from three places that must agree:
+
+  * the serving app's start-up warm-up call;
+  * the `input_example` attached to the registered MLflow model, which is what makes the
+    registry self-documenting;
+  * `examples/user.json` at the repo root, for `curl` (kept in step by a test).
+
+It previously lived only in `examples/user.json` and was read with a repo-relative path.
+That works from a git checkout and fails the moment the package is installed as a wheel --
+which is exactly what happened on the first Databricks training run, after CatBoost and
+TabPFN had already finished:
+
+    FileNotFoundError: .../lib/python3.12/examples/user.json
+
+Anything the runtime needs belongs in the package, not next to it.
+"""
+from __future__ import annotations
+
+from typing import Any
+
+EXAMPLE_USER: dict[str, Any] = {
+    "session_dt": "2026-01-06 19:24:22",
+    "conversion_dt": "2026-01-06 19:26:10",
+    "register_date": "2026-01-06 19:26:07",
+    "campaign_id": 120227360861540306,
+    "page": "top10us.com/app/business-loans-v2",
+    "auto_city": "Fort Lauderdale",
+    "auto_country": "United States",
+    "auto_state": "Florida",
+    "device_type": "mobile",
+    "sub1": 1121993,
+    "sub2": "01121993 Ad set",
+    "sub3": 1513124082,
+    "business_type": "C Corporation",
+    "credit_score": "Very Poor - Under 550",
+    "industry": "construction",
+    "loan_amount": "$25,000 - $49,999",
+    "loan_reason": "Equipment purchase",
+    "monthly_revenue": "$20,000 - $49,999",
+    "time_in_business": "2+ years",
+    "fname": "Rigoberto",
+    "lname": "Rodriguez",
+    "cellphone": 7869914030,
+}

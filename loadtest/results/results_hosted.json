@@ -1,0 +1,44 @@
+[
+  {
+    "requests": 60,
+    "concurrency": 1,
+    "succeeded": 60,
+    "failed": 0,
+    "wall_seconds": 198.56,
+    "throughput_rps": 0.3,
+    "latency_ms": {
+      "min": 1459.3,
+      "p50": 1623.4,
+      "p90": 10276.7,
+      "p95": 12253.4,
+      "p99": 19295.9,
+      "max": 20968.9,
+      "mean": 3309.3
+    },
+    "sample_errors": []
+  },
+  {
+    "requests": 60,
+    "concurrency": 10,
+    "succeeded": 50,
+    "failed": 10,
+    "wall_seconds": 19.07,
+    "throughput_rps": 2.62,
+    "latency_ms": {
+      "min": 936.1,
+      "p50": 1234.8,
+      "p90": 6444.9,
+      "p95": 6897.2,
+      "p99": 12105.5,
+      "max": 12105.5,
+      "mean": 2360.5
+    },
+    "sample_errors": [
+      "500: {\"detail\":\"ranking failed\"}",
+      "500: {\"detail\":\"ranking failed\"}",
+      "500: {\"detail\":\"ranking failed\"}",
+      "500: {\"detail\":\"ranking failed\"}",
+      "500: {\"detail\":\"ranking failed\"}"
+    ]
+  }
+]

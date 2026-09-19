@@ -1,0 +1,20 @@
+[
+  {
+    "requests": 200,
+    "concurrency": 1,
+    "succeeded": 200,
+    "failed": 0,
+    "wall_seconds": 211.37,
+    "throughput_rps": 0.95,
+    "latency_ms": {
+      "min": 997.5,
+      "p50": 1054.3,
+      "p90": 1086.1,
+      "p95": 1095.9,
+      "p99": 1119.9,
+      "max": 1146.9,
+      "mean": 1056.9
+    },
+    "sample_errors": []
+  }
+]

@@ -1,0 +1,39 @@
+.venv/
+.idea/
+__pycache__/
+*.pyc
+.env
+data/delta/
+mlruns/
+artifacts/
+loadtest/results.json
+# The 50MB dataset is distributed via the Drive link in the briefing, not the repo.
+Task/bl_full_data.csv
+# Run logs and scratch output produced while developing/verifying locally
+*.log
+COMMIT_MSG.txt
+charts_preview/
+
+# Secrets: never commit. TABPFN token belongs in .env (which is ignored above).
+Task/tabpfn_sk.txt
+*token*.txt
+# Local MLflow backing store and artifacts
+mlflow_local/
+
+# Python build artifacts (the wheel is built on demand; see docs/RUNBOOK.md B5)
+build/
+dist/
+*.egg-info/
+
+# Node deps for the deck/document generators (docs/package.json pins them; run `npm install` in docs/)
+node_modules/
+
+# Personal working notes — extended measurements and rejected approaches.
+# Deliberately not published: the repository is public.
+docs/ENGINEERING_NOTES.md
+
+# The slide deck is an optional extra; the Part 2 deliverable is the document at the
+# repository root. The deck, its generator and its speaker notes stay local.
+*.pptx
+docs/build_deck.js
+docs/PRESENTATION.md

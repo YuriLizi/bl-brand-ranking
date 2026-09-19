@@ -1,0 +1,21 @@
+# Overlay that switches serving to the HOSTED TabPFN API (the researcher's original
+# design) instead of the local open-source weights.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.hosted.yml up -d serving
+#
+# TABPFN_TOKEN is substituted from .env (gitignored) -- it is never baked into the image
+# and never committed. Without it the container fails fast at startup with a clear message
+# rather than silently falling back to local.
+#
+# Why this is an overlay and not a flag in the main file: the default has to be the path
+# that works with no signup and no network, so a reviewer can run the stack cold.
+services:
+  serving:
+    environment:
+      USE_HOSTED_TABPFN: "true"
+      TABPFN_TOKEN: "${TABPFN_TOKEN:?TABPFN_TOKEN must be set in .env to use the hosted API}"
+    # The hosted path is I/O-bound, not CPU-bound: the container waits on a network call
+    # instead of running a forward pass. It therefore needs neither the CPU reservation nor
+    # the ~3GB the local cached context occupies.
+    mem_limit: 2g
+    cpus: 2.0

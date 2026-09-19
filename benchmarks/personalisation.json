@@ -1,0 +1,103 @@
+{
+  "rankings": {
+    "strong": [
+      "xlt",
+      "businessloans.com",
+      "fundera / nerdwallet",
+      "directagents - adt",
+      "healthy paws",
+      "credibly",
+      "fora",
+      "fairsquare",
+      "lendingtree",
+      "lendzi"
+    ],
+    "weak": [
+      "xlt",
+      "fundera / nerdwallet",
+      "businessloans.com",
+      "healthy paws",
+      "directagents - adt",
+      "credibly",
+      "fora",
+      "fairsquare",
+      "lendingtree",
+      "lendzi"
+    ],
+    "mid": [
+      "xlt",
+      "businessloans.com",
+      "fundera / nerdwallet",
+      "healthy paws",
+      "directagents - adt",
+      "credibly",
+      "fora",
+      "fairsquare",
+      "lendingtree",
+      "lendzi"
+    ]
+  },
+  "identical": false,
+  "shap_top": [
+    {
+      "feature": "client_name",
+      "mean_abs_shap": 2.3600630003134735,
+      "share": 0.4076680798910592
+    },
+    {
+      "feature": "sub1",
+      "mean_abs_shap": 0.5101847967638523,
+      "share": 0.08812733238845928
+    },
+    {
+      "feature": "cellphone_prefix",
+      "mean_abs_shap": 0.4785891332777788,
+      "share": 0.08266962068138163
+    },
+    {
+      "feature": "monthly_revenue_num",
+      "mean_abs_shap": 0.2590170783443274,
+      "share": 0.04474160010711523
+    },
+    {
+      "feature": "page",
+      "mean_abs_shap": 0.24296000025595993,
+      "share": 0.04196796305078407
+    },
+    {
+      "feature": "sub3",
+      "mean_abs_shap": 0.2340548203212604,
+      "share": 0.04042971699354697
+    },
+    {
+      "feature": "sub2",
+      "mean_abs_shap": 0.15419806725632887,
+      "share": 0.026635572860957718
+    },
+    {
+      "feature": "fname_len",
+      "mean_abs_shap": 0.14643690505431786,
+      "share": 0.02529493996590507
+    },
+    {
+      "feature": "business_type",
+      "mean_abs_shap": 0.14413705514918346,
+      "share": 0.024897672861281486
+    },
+    {
+      "feature": "session_day_of_week",
+      "mean_abs_shap": 0.1394486968208736,
+      "share": 0.02408782412534119
+    },
+    {
+      "feature": "city",
+      "mean_abs_shap": 0.13883448109745028,
+      "share": 0.023981726896337714
+    },
+    {
+      "feature": "industry",
+      "mean_abs_shap": 0.13252641200397633,
+      "share": 0.022892095638691164
+    }
+  ]
+}

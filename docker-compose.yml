@@ -1,0 +1,111 @@
+# Local production-shaped stack.
+#
+#   mlflow     tracking server + model registry (the system of record for versions)
+#   trainer    one-shot production training run (profile: train)
+#   serving    the synchronous ranking endpoint
+#   scheduler  fires the production run every Sunday 05:00
+#
+# `base` is built once and reused, so the ~2GB of torch/CatBoost/TabPFN/NameDataset
+# layers are shared rather than duplicated per service.
+
+services:
+  base:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.base
+    image: bl-ranker-base:latest
+    # Build-only image; never runs.
+    command: ["python", "-c", "print('base image built')"]
+    profiles: ["build"]
+
+  mlflow:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.mlflow
+    image: bl-ranker-mlflow:latest
+    ports:
+      - "5000:5000"
+    volumes:
+      # Bind-mounted, not a named volume, so the containerised MLflow serves the SAME
+      # history as a local run. Every artifact URI the store records is of the form
+      # `mlflow-artifacts:/...` -- server-relative, never an absolute host path -- so the
+      # directory is portable between the two without rewriting anything.
+      - ./mlflow_local:/mlflow
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  trainer:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.training
+    image: bl-ranker-training:latest
+    depends_on:
+      mlflow:
+        condition: service_healthy
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      DELTA_TABLE_PATH: /app/data/delta/bl_sessions
+      RAW_CSV_PATH: /app/Task/bl_full_data.csv
+    volumes:
+      - ./data:/app/data
+      - ./Task:/app/Task:ro
+    profiles: ["train"]
+
+  serving:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.serving
+    image: bl-ranker-serving:latest
+    depends_on:
+      mlflow:
+        condition: service_healthy
+    ports:
+      # Host 8088, container 8000. Port 8000 is very commonly taken on a developer
+      # machine (it was occupied here by an unrelated app), and a clash shows up as an
+      # empty reply rather than a bind error, because the OTHER process answers.
+      # Override with SERVING_HOST_PORT if 8088 is also busy.
+      - "${SERVING_HOST_PORT:-8088}:8000"
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      TORCH_NUM_THREADS: "5"
+      OMP_NUM_THREADS: "5"
+    # ONE worker here, overriding the image default of 2.
+    # Each worker holds its own ~3.4GB TabPFN cached context. This machine gives WSL2 9GB
+    # (see ~/.wslconfig), which cannot hold two workers plus MLflow. On a host with 16GB+
+    # available to the engine, drop this override and use the image's 2 workers.
+    command:
+      - uvicorn
+      - bl_ranker.serving.app:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --workers
+      - "1"
+      - --log-level
+      - info
+      - --no-access-log
+    volumes:
+      - ./data:/app/data
+    mem_limit: 6g
+    cpus: 5.0
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.scheduler
+    image: bl-ranker-scheduler:latest
+    depends_on:
+      mlflow:
+        condition: service_healthy
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      SCHEDULE_CRON: "0 5 * * 0"
+      SCHEDULE_TIMEZONE: "UTC"
+      DELTA_TABLE_PATH: /app/data/delta/bl_sessions
+    volumes:
+      - ./data:/app/data
+      - ./Task:/app/Task:ro

@@ -1,0 +1,45 @@
+{
+  "hardware": "CPU-only",
+  "context_size": 1000,
+  "n_brands": 10,
+  "n_users": 25,
+  "baseline_n_estimators": 8,
+  "results": [
+    {
+      "n_estimators": 8,
+      "fit_seconds": 90.7,
+      "latency_ms_p50": 1067.5,
+      "speedup_vs_baseline": 1.0,
+      "spearman_vs_baseline": 1.0,
+      "top1_agreement": 1.0,
+      "mean_abs_payout_diff": 0.0
+    },
+    {
+      "n_estimators": 4,
+      "fit_seconds": 40.5,
+      "latency_ms_p50": 564.1,
+      "speedup_vs_baseline": 1.9,
+      "spearman_vs_baseline": 0.9775,
+      "top1_agreement": 0.8,
+      "mean_abs_payout_diff": 26.58
+    },
+    {
+      "n_estimators": 2,
+      "fit_seconds": 22.2,
+      "latency_ms_p50": 304.9,
+      "speedup_vs_baseline": 3.5,
+      "spearman_vs_baseline": 0.9715,
+      "top1_agreement": 0.76,
+      "mean_abs_payout_diff": 44.697
+    },
+    {
+      "n_estimators": 1,
+      "fit_seconds": 7.5,
+      "latency_ms_p50": 116.7,
+      "speedup_vs_baseline": 9.1,
+      "spearman_vs_baseline": 0.8219,
+      "top1_agreement": 0.52,
+      "mean_abs_payout_diff": 38.606
+    }
+  ]
+}

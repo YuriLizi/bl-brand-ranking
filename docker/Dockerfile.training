@@ -1,0 +1,2 @@
+FROM bl-ranker-base:latest
+CMD ["python", "-m", "bl_ranker.training.run", "--mode", "production"]

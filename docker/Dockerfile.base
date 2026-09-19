@@ -1,0 +1,37 @@
+# Shared base: heavy, slow-changing layers first so application edits do not
+# invalidate the dependency cache.
+#
+# 3.12 is NOT a preference. The researcher's bl_models_train.py uses PEP 701 f-strings
+# (newlines inside the expression), which are a SyntaxError on 3.11 and earlier. Pinning
+# it here is what stops that from being discovered at container start.
+FROM python:3.12-slim AS base
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1
+
+# libgomp1 is required by CatBoost; git lets MLflow record the source revision.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libgomp1 curl git \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements-torch.txt requirements.txt ./
+RUN pip install -r requirements-torch.txt && pip install -r requirements.txt
+
+# Fail the build immediately if the runtime cannot parse the researcher's scripts,
+# rather than letting a container start and die on the first training call.
+COPY src/bl_ranker/original/ /tmp/original/
+RUN python -m py_compile /tmp/original/bl_models_train.py /tmp/original/bl_exp_payout_predictor.py \
+    && rm -rf /tmp/original
+
+# Bake the TabPFN weights and the NameDataset into the image. Downloading either at
+# container start would add minutes to a cold start and put a network dependency in the
+# deployment path. These are deliberately NOT `|| true`: if the weights are missing the
+# image is broken, and we want to know at build time.
+RUN python -c "from tabpfn import TabPFNRegressor; TabPFNRegressor(device='cpu')"
+RUN python -c "from names_dataset import NameDataset; NameDataset()"
+
+COPY src/ /app/src/
+ENV PYTHONPATH=/app/src

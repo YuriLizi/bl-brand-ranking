@@ -1,0 +1,23 @@
+FROM bl-ranker-base:latest
+
+# 2 workers x 3 threads saturates a 6-core box without oversubscribing it. Letting each
+# worker grab every core inflates tail latency badly under concurrency.
+ENV TORCH_NUM_THREADS=3 \
+    OMP_NUM_THREADS=3 \
+    MKL_NUM_THREADS=3
+
+EXPOSE 8000
+
+# Cold start is ~110s: loading the model and fitting TabPFN's cached context. The start
+# period must cover it or the orchestrator will kill the container before it is ready.
+HEALTHCHECK --interval=15s --timeout=5s --start-period=240s --retries=5 \
+    CMD curl -fsS http://localhost:8000/health || exit 1
+
+# Workers, not threads: the forward pass holds the GIL, so threads would serialise.
+#
+# Two, not more. Each worker holds its OWN TabPFN cached context -- measured at ~3.4GB
+# resident -- so replica count here is MEMORY-bound, not CPU-bound. Three workers would
+# need >10GB for caches alone. Scale out across containers rather than up within one.
+CMD ["uvicorn", "bl_ranker.serving.app:app", \
+     "--host", "0.0.0.0", "--port", "8000", \
+     "--workers", "2", "--log-level", "info", "--no-access-log"]

@@ -1,0 +1,17 @@
+.venv/
+.git/
+.idea/
+__pycache__/
+**/__pycache__/
+*.pyc
+.env
+mlruns/
+mlflow_local/
+data/delta/
+artifacts/
+benchmarks/fidelity.json
+loadtest/results.json
+*.log
+# The 50MB dataset is bind-mounted at runtime, never baked into the image.
+Task/bl_full_data.csv
+docs/

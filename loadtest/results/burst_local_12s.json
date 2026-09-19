@@ -1,0 +1,308 @@
+{
+  "size": 10,
+  "gap": 12.0,
+  "duration": 60.0,
+  "wall": 60.04367590000038,
+  "results": [
+    {
+      "burst": 0,
+      "ms": 9429.362499999115,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 0,
+      "ms": 9576.446799997939,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 0,
+      "ms": 9593.935599998076,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 0,
+      "ms": 9699.601799999073,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 0,
+      "ms": 9732.254500002455,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 0,
+      "ms": 9751.571499997226,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 0,
+      "ms": 9782.299700000294,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 0,
+      "ms": 9809.673799998563,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 0,
+      "ms": 9820.995699999912,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 0,
+      "ms": 9827.494700002717,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 1,
+      "ms": 9605.070399997203,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 1,
+      "ms": 9721.364500001073,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 1,
+      "ms": 9758.12230000156,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 1,
+      "ms": 9763.797700001305,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 1,
+      "ms": 9801.46700000114,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 1,
+      "ms": 9812.091600000713,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 1,
+      "ms": 9823.80380000177,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 1,
+      "ms": 9837.134199999127,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 1,
+      "ms": 9834.900800000469,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 1,
+      "ms": 9859.454999997979,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 2,
+      "ms": 10350.96809999959,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 2,
+      "ms": 10554.42960000073,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 2,
+      "ms": 10586.021099999925,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 2,
+      "ms": 10644.537399999535,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 2,
+      "ms": 10716.537500000413,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 2,
+      "ms": 10732.739200000651,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 2,
+      "ms": 10832.647400002315,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 2,
+      "ms": 10843.071100000088,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 2,
+      "ms": 10850.676499998372,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 2,
+      "ms": 10846.116700002312,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 3,
+      "ms": 11346.100800001295,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 3,
+      "ms": 11383.544399999664,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 3,
+      "ms": 11386.099999999715,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 3,
+      "ms": 11463.764600001014,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 3,
+      "ms": 11482.396599996719,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 3,
+      "ms": 11489.885700000741,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 3,
+      "ms": 11507.994400002644,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 3,
+      "ms": 11509.41800000146,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 3,
+      "ms": 11530.194799997844,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 3,
+      "ms": 11530.237599999964,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 4,
+      "ms": 10402.160300000105,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 4,
+      "ms": 10449.268499996833,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 4,
+      "ms": 10512.515800000983,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 4,
+      "ms": 10581.57249999931,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 4,
+      "ms": 10598.040299999411,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 4,
+      "ms": 10705.542499999865,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 4,
+      "ms": 10749.875400000747,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 4,
+      "ms": 10780.669299998408,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 4,
+      "ms": 10793.96909999923,
+      "ok": true,
+      "err": null
+    },
+    {
+      "burst": 4,
+      "ms": 10799.62869999872,
+      "ok": true,
+      "err": null
+    }
+  ]
+}

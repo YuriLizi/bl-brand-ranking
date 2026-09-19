@@ -1,0 +1,61 @@
+[
+  {
+    "requests": 60,
+    "concurrency": 2,
+    "succeeded": 60,
+    "failed": 0,
+    "wall_seconds": 66.38,
+    "throughput_rps": 0.9,
+    "latency_ms": {
+      "min": 1096.6,
+      "p50": 2204.3,
+      "p90": 2270.7,
+      "p95": 2310.3,
+      "p99": 2313.9,
+      "max": 2316.4,
+      "mean": 2194.1
+    },
+    "sample_errors": []
+  },
+  {
+    "requests": 60,
+    "concurrency": 4,
+    "succeeded": 60,
+    "failed": 0,
+    "wall_seconds": 66.39,
+    "throughput_rps": 0.9,
+    "latency_ms": {
+      "min": 1118.6,
+      "p50": 4425.0,
+      "p90": 4462.7,
+      "p95": 4466.4,
+      "p99": 4470.1,
+      "max": 4472.4,
+      "mean": 4370.1
+    },
+    "sample_errors": []
+  },
+  {
+    "requests": 60,
+    "concurrency": 8,
+    "succeeded": 56,
+    "failed": 4,
+    "wall_seconds": 61.91,
+    "throughput_rps": 0.9,
+    "latency_ms": {
+      "min": 1123.0,
+      "p50": 7786.5,
+      "p90": 8900.4,
+      "p95": 13216.1,
+      "p99": 14412.7,
+      "max": 15440.1,
+      "mean": 8310.7
+    },
+    "sample_errors": [
+      "RemoteProtocolError('Server disconnected without sending a response.')",
+      "RemoteProtocolError('Server disconnected without sending a response.')",
+      "RemoteProtocolError('Server disconnected without sending a response.')",
+      "RemoteProtocolError('Server disconnected without sending a response.')"
+    ]
+  }
+]

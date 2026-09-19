@@ -1,0 +1,38 @@
+[
+  {
+    "requests": 60,
+    "concurrency": 1,
+    "succeeded": 60,
+    "failed": 0,
+    "wall_seconds": 90.71,
+    "throughput_rps": 0.66,
+    "latency_ms": {
+      "min": 1330.8,
+      "p50": 1492.5,
+      "p90": 1627.2,
+      "p95": 1697.7,
+      "p99": 1882.1,
+      "max": 1895.1,
+      "mean": 1511.8
+    },
+    "sample_errors": []
+  },
+  {
+    "requests": 60,
+    "concurrency": 10,
+    "succeeded": 60,
+    "failed": 0,
+    "wall_seconds": 72.25,
+    "throughput_rps": 0.83,
+    "latency_ms": {
+      "min": 4861.8,
+      "p50": 11563.5,
+      "p90": 14322.9,
+      "p95": 14765.5,
+      "p99": 15356.9,
+      "max": 15598.4,
+      "mean": 11654.9
+    },
+    "sample_errors": []
+  }
+]
