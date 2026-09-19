@@ -37,3 +37,17 @@ docs/ENGINEERING_NOTES.md
 *.pptx
 docs/build_deck.js
 docs/PRESENTATION.md
+
+# Working files kept locally, not part of the deliverable
+docs/TODO.md
+docs/ASSIGNMENT.md
+Task/BL_MLOps_Assignment_Briefing.docx
+Makefile
+# Document/deck generators and their node dependencies
+docs/build_doc.js
+docs/qa_deck.py
+docs/package.json
+docs/package-lock.json
+# Superseded investigation: the conclusion survives in the README limitations
+benchmarks/ranking_personalisation.py
+benchmarks/personalisation.json
